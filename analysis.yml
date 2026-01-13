@@ -1,0 +1,28 @@
+---
+- name: Analysis
+  hosts: all
+  strategy: free
+  gather_facts: true
+  become: true
+  force_handlers: true
+
+  vars:
+    leapp_answerfile: |
+      [remove_pam_pkcs11_module_check]
+      confirm = True
+  tasks:
+    - name: Fix subscription-manager
+      ansible.builtin.command:
+        cmd: subscription-manager unregister
+      changed_when: true
+      failed_when: false
+
+    - name: Generate preupgrade analysis report
+      ansible.builtin.import_role:
+        name: infra.leapp.analysis
+
+    # - name: Debug inhibitors
+    #   ansible.builtin.debug:
+    #     var: leapp_inhibitors
+    #   when: upgrade_inhibited
+...

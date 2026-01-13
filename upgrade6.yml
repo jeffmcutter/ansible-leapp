@@ -1,0 +1,23 @@
+---
+- name: Upgrade
+  hosts: all
+  strategy: free
+  become: true
+  force_handlers: true
+  vars:
+    update_grub_to_grub_2: true
+  tasks:
+    - name: Install leapp packages
+      ansible.builtin.package:
+        name:
+          - preupgrade-assistant
+          - preupgrade-assistant-el6toel7
+          - redhat-upgrade-tool
+          - openscap
+          - openscap-engine-sce
+        state: latest # noqa package-latest
+
+    - name: Perform OS upgrade
+      ansible.builtin.import_role:
+        name: infra.leapp.upgrade
+...

@@ -1,0 +1,13 @@
+---
+satellite_organization: my_org
+satellite_activation_key: rhel{{ ansible_distribution_major_version }}_dev
+satellite_activation_key_pre_leapp: "{{ satellite_activation_key }}" # Standard RHEL 7 AK
+satellite_activation_key_leapp: "{{ satellite_activation_key }}" # Leapp AK
+satellite_activation_key_post_leapp: "{{ satellite_activation_key }}" # Standard RHEL 8 AK
+
+# leapp_repos_enabled:
+#   - satellite-client-6-for-rhel-{{ ansible_distribution_major_version | int + 1 }}-x86_64-rpms
+
+rhel_7_network_install_repo_url: http://satcap1.localdomain.local/pub/ISO/RHEL7.9
+
+...

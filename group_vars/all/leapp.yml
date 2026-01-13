@@ -1,0 +1,19 @@
+---
+leapp_answerfile: |
+  [remove_pam_pkcs11_module_check]
+  confirm = True
+
+check_leapp_analysis_results: false
+
+kernel_modules_to_unload_before_upgrade:
+  - pata_acpi
+
+# leapp_high_sev_as_inhibitors: true
+
+leapp_known_inhibitors:
+  # vdo check
+  - 2f9802dc91315806c7cdc3c18d7b74f2a2383285
+  # vdo package
+  - 429a99e13b19a7eebadbb8cb35233d8119bcf255
+
+...

@@ -1,0 +1,102 @@
+---
+- name: Try type_debug
+  hosts: localhost
+  gather_facts: false
+  vars:
+    string: "abc"
+    number: 123
+    list:
+      - one
+      - two
+      - three
+    dict:
+      foo: abc
+      bar: efg
+      biz: hij
+      baz: lmn
+    list_of_dicts:
+      - foo: abc
+        bar: efg
+        biz: hij
+        baz: lmn
+      - foo: opq
+        bar: rst
+        biz: tuv
+        baz: wxyz
+  tasks:
+    - name: Test string
+      ansible.builtin.debug:
+        msg: "{{ string | type_debug }}"
+
+    - name: Test number
+      ansible.builtin.debug:
+        msg: "{{ number | type_debug }}"
+
+    - name: Test list
+      ansible.builtin.debug:
+        msg: "{{ list | type_debug }}"
+
+    - name: Test list elements
+      ansible.builtin.debug:
+        msg: "{{ item | type_debug }}"
+      loop: "{{ list }}"
+
+    - name: Test dict
+      ansible.builtin.debug:
+        msg: "{{ dict | type_debug }}"
+
+    - name: Get a list of foo
+      ansible.builtin.set_fact:
+        list_of_foo: "{{ list_of_dicts | map(attribute='foo') | list }}"
+
+    - name: Test list_of_foo
+      ansible.builtin.debug:
+        msg: "{{ list_of_foo | type_debug }}"
+
+    - name: Test list_of_foo elements
+      ansible.builtin.debug:
+        msg: "{{ item | type_debug }}"
+      loop: "{{ list_of_foo }}"
+
+    - name: Find files in ~/tmp/test
+      ansible.builtin.find:
+        paths: ~/tmp/test
+        patterns: "*.yml"
+        file_type: file
+      register: files
+
+    - name: Test files.files elements
+      ansible.builtin.debug:
+        msg: "{{ item.path | type_debug }}"
+      loop: "{{ files.files }}"
+
+    - name: Flatten files list
+      ansible.builtin.set_fact:
+        files_list: "{{ files.files | map(attribute='path') | list }}"
+
+    - name: Test files_list elements
+      ansible.builtin.debug:
+        msg: "{{ item | type_debug }}"
+      loop: "{{ files_list }}"
+
+    - name: Find files in ~/tmp/test2/{{ item }}
+      ansible.builtin.find:
+        paths: ~/tmp/test2/{{ item }}
+        patterns: "*.yml"
+        file_type: file
+      register: files_in_loop
+      loop:
+        - dir1
+        - dir2
+        - dir3
+
+    - name: Flatten files_in_loop
+      ansible.builtin.set_fact:
+        files_in_loop_list: "{{ files_in_loop.results | map(attribute='files') | list | flatten | map(attribute='path') | list }}"
+
+    - name: Test files_in_loop_list elements
+      ansible.builtin.debug:
+        msg: "{{ item | type_debug }}"
+      loop: "{{ files_in_loop_list }}"
+
+...

@@ -1,0 +1,112 @@
+---
+- name: Consolidate /usr file systems into /
+  hosts: all
+  vars:
+    usr_space_used: 0
+    usr_space_total: 0
+    tmp_root_mount: /mnt/tmp_root
+    destroy_logical_volumes: true
+    add_usr_space_to_root: true
+  tasks:
+    - name: Collect /usr mounts
+      ansible.builtin.set_fact:
+        usr_mounts: "{{ ansible_mounts | selectattr('mount', 'match', '^/usr$|^/usr/') | list }}"
+
+    - name: End play if no /usr mounts found
+      ansible.builtin.debug:
+        msg: "Found {{ usr_mounts | length }} /usr mounts"
+
+    - name: End play if no /usr mounts found
+      ansible.builtin.meta: end_play
+      when: usr_mounts | length < 1
+
+    - name: Get / mount
+      ansible.builtin.set_fact:
+        root_mount: "{{ ansible_mounts | selectattr('mount', 'match', '^/$') | list | first }}"
+
+    - name: Calculate space used under /usr
+      ansible.builtin.set_fact:
+        usr_space_used: "{{ usr_space_used | int + item.size_total - item.size_available }}"
+        usr_space_total: "{{ usr_space_total | int + item.size_total }}"
+      loop: "{{ usr_mounts }}"
+
+    - name: Calculate utilization of / after consolidation
+      ansible.builtin.set_fact:
+        root_utilization: "{{ (usr_space_used | int + root_mount.size_total - root_mount.size_available) / root_mount.size_total * 100 }}"
+
+    - name: Assert that there is sufficient space in /
+      ansible.builtin.assert:
+        that: root_utilization | int <= 95
+        msg: Combining /usr would cause / to be more than 95% full.
+
+    - name: Root device is bind mounted to temporary mount point
+      ansible.posix.mount:
+        path: "{{ tmp_root_mount }}"
+        src: /
+        boot: false
+        opts: bind
+        state: mounted
+        fstype: none
+
+    - name: Package rsync is present
+      ansible.builtin.package:
+        name: rsync
+        state: present
+
+    - name: Synchronize /usr to temporary bind mount
+      ansible.posix.synchronize:
+        src: /usr
+        dest: "{{ tmp_root_mount }}"
+        archive: true
+        delete: true
+        compress: false
+      delegate_to: "{{ inventory_hostname }}"
+
+    - name: Mounts in /usr are absent from the fstab
+      ansible.posix.mount:
+        backup: true
+        path: "{{ item.mount }}"
+        state: absent_from_fstab
+      loop: "{{ usr_mounts }}"
+
+    - name: Remove bind mount for /
+      ansible.posix.mount:
+        path: "{{ tmp_root_mount }}"
+        src: /
+        opts: bind
+        state: absent
+        fstype: none
+
+    - name: Create selinux /.autorelabel
+      ansible.builtin.file:
+        path: /.autorelabel
+        state: touch
+        owner: root
+        group: root
+        mode: '0644'
+      when: ansible_selinux.status == 'enabled'
+
+    - name: Reboot server to unmount /usr mounts
+      ansible.builtin.reboot:
+        reboot_timeout: 7200
+
+    - name: Delete logical volumes used by /usr mounts
+      community.general.lvol:
+        vg: "{{ item.device.split('/')[-1].split('-')[0] }}"
+        lv: "{{ item.device.split('/')[-1].split('-')[1] }}"
+        state: absent
+        force: true
+      loop: "{{ usr_mounts }}"
+      when: destroy_logical_volumes
+
+    - name: Add space used by /usr mounts to /
+      community.general.lvol:
+        vg: "{{ root_mount.device.split('/')[-1].split('-')[0] }}"
+        lv: "{{ root_mount.device.split('/')[-1].split('-')[1] }}"
+        size: "+{{ usr_space_total }}b"
+        resizefs: true
+      when:
+        - destroy_logical_volumes
+        - add_usr_space_to_root
+
+...

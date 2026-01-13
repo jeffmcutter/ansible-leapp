@@ -1,0 +1,4 @@
+---
+# post_upgrade_release: "9.2"
+# leapp_upgrade_opts: '--target 9.2'
+...

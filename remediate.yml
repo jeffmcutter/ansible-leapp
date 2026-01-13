@@ -1,0 +1,20 @@
+---
+- name: Remediate
+  hosts: all
+  strategy: free
+  become: true
+  force_handlers: true
+  vars:
+    remediation_todo:
+      - leapp_vdo_check_needed
+  tasks:
+    - name: Perform remediations on the system
+      ansible.builtin.import_role:
+        name: infra.leapp.remediate
+
+    - name: Fix ssh root login
+      ansible.builtin.replace:
+        path: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin yes$'
+        replace: 'PermitRootLogin yes # OK'
+...

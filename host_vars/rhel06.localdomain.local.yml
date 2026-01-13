@@ -1,0 +1,31 @@
+---
+local_repos_pre_leapp:
+  - name: rhel-6-server-rpms
+    description: Red Hat Enterprise Linux 6 Server (RPMs)
+    baseurl: http://rhel05.localdomain.local/6Server/rhel-6-server-rpms
+    file: rhel6Server
+  - name: rhel-6-server-extras-rpms
+    description: Red Hat Enterprise Linux 6 Server Extras (RPMs)
+    baseurl: http://rhel05.localdomain.local/6Server/rhel-6-server-extras-rpms
+    file: rhel6Server
+  - name: rhel-6-server-optional-rpms
+    description: Red Hat Enterprise Linux 6 Server Optional (RPMs)
+    baseurl: http://rhel05.localdomain.local/6Server/rhel-6-server-optional-rpms
+    file: rhel6Server
+
+rhel_7_network_install_repo_url: http://rhel03.localdomain.local/ISO/RHEL7.9
+
+repo_files_to_remove_at_upgrade:
+  - rhel6Server.repo
+
+local_repos_post_upgrade:
+  - name: rhel-7-server-rpms
+    description: Red Hat Enterprise Linux 7 Server (RPMs)
+    baseurl: http://rhel03.localdomain.local/7Server/rhel-7-server-rpms
+    file: rhel7Server
+  - name: rhel-7-server-extras-rpms
+    description: Red Hat Enterprise Linux 7 Server Extras (RPMs)
+    baseurl: http://rhel03.localdomain.local/7Server/rhel-7-server-extras-rpms
+    file: rhel7Server
+
+...

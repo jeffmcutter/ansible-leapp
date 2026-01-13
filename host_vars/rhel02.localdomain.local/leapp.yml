@@ -1,0 +1,44 @@
+---
+local_repos_pre_leapp:
+  - name: rhel-8-for-x86_64-baseos-rpms
+    description: Red Hat 8 Base OS
+    baseurl: http://rhel01.localdomain.local/8/rhel-8-for-x86_64-baseos-rpms
+    file: rhel8Server
+  - name: rhel-8-for-x86_64-appstream-rpms
+    description: Red Hat 8 App Stream
+    baseurl: http://rhel01.localdomain.local/8/rhel-8-for-x86_64-appstream-rpms
+    file: rhel8Server
+
+local_repos_post_analysis:
+  - name: rhel-8-for-x86_64-baseos-rpms
+    description: Red Hat 8 Base OS
+    baseurl: http://rhel01.localdomain.local/8/rhel-8-for-x86_64-baseos-rpms
+    file: rhel8Server
+  - name: rhel-8-for-x86_64-appstream-rpms
+    description: Red Hat 8 App Stream
+    baseurl: http://rhel01.localdomain.local/8/rhel-8-for-x86_64-appstream-rpms
+    file: rhel8Server
+
+local_repos_leapp:
+  - name: rhel-9-for-x86_64-baseos-rpms
+    description: Red Hat 9.3 Base OS
+    baseurl: http://rhel07.localdomain.local/9.3/rhel-9-for-x86_64-baseos-rpms
+  - name: rhel-9-for-x86_64-appstream-rpms
+    description: Red Hat 9.3 App Stream
+    baseurl: http://rhel07.localdomain.local/9.3/rhel-9-for-x86_64-appstream-rpms
+
+repo_files_to_remove_at_upgrade:
+  - rhel8Server.repo
+  - rhel8.repo
+
+local_repos_post_upgrade:
+  - name: rhel-9-for-x86_64-baseos-rpms
+    description: Red Hat 9 Base OS
+    baseurl: http://rhel07.localdomain.local/9/rhel-9-for-x86_64-baseos-rpms
+    file: rhel9Server
+  - name: rhel-9-for-x86_64-appstream-rpms
+    description: Red Hat 9 App Stream
+    baseurl: http://rhel07.localdomain.local/9/rhel-9-for-x86_64-appstream-rpms
+    file: rhel9Server
+
+...

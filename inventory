@@ -1,0 +1,37 @@
+[rhel6]
+satrhel6-1.localdomain.local
+satrhel6-2.localdomain.local
+rhel06.localdomain.local leapp_upgrade_type=custom leapp_repos_enabled=[]
+rhel09.localdomain.local leapp_upgrade_type=cdn rhel_7_network_install_repo_url=http://rhel03.localdomain.local/ISO/RHEL7.9
+
+[rhel7]
+satrhel7-1.localdomain.local
+satrhel7-2.localdomain.local
+satrhel7-3.localdomain.local
+satrhel7-4.localdomain.local leapp_upgrade_type=cdn leapp_repos_enabled=[]
+rhel04.localdomain.local leapp_upgrade_type=custom leapp_repos_enabled=[]
+# rhel07.localdomain.local leapp_upgrade_type=cdn
+rhel07.localdomain.local ansible_host=192.168.124.157 ansible_user=root
+
+[rhel8]
+satrhel8-1.localdomain.local
+satrhel8-2.localdomain.local
+rhel02.localdomain.local leapp_upgrade_type=custom leapp_repos_enabled=[]
+rhel08.localdomain.local leapp_upgrade_type=cdn
+
+[rhel9]
+# satrhel9-1.localdomain.local
+# satrhel9-2.localdomain.local
+satrhel9-3.localdomain.local
+satrhel9-4.localdomain.local
+
+[pcs7]
+satpcs7-1.localdomain.local
+satpcs7-2.localdomain.local
+
+[pcs8]
+satpcs8-1.localdomain.local
+satpcs8-2.localdomain.local
+
+[aap]
+aap2.localdomain.local
